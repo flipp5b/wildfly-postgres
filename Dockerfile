@@ -2,15 +2,21 @@ FROM jboss/wildfly:10.1.0.Final
 
 ARG POSTGRES_DRIVER_VERSION=42.1.4
 
-COPY setup-driver.sh /tmp/
+COPY configure.sh $JBOSS_HOME/bin/
 USER root
-RUN chown jboss:jboss /tmp/setup-driver.sh
-RUN chmod 755 /tmp/setup-driver.sh
+RUN chown jboss:jboss $JBOSS_HOME/bin/configure.sh
+RUN chmod 755 $JBOSS_HOME/bin/configure.sh
 USER jboss
 
-RUN /tmp/setup-driver.sh
+COPY setup-postgres-driver.cli /tmp/
 
-RUN rm /tmp/setup-driver.sh
+RUN curl -o /tmp/postgresql-$POSTGRES_DRIVER_VERSION.jar https://jdbc.postgresql.org/download/postgresql-$POSTGRES_DRIVER_VERSION.jar
+RUN $JBOSS_HOME/bin/configure.sh /tmp/setup-postgres-driver.cli
+RUN rm /tmp/postgresql-$POSTGRES_DRIVER_VERSION.jar
+
+USER root
+RUN rm /tmp/setup-postgres-driver.cli
+USER jboss
 
 RUN $JBOSS_HOME/bin/add-user.sh admin pa55w0rd --silent
 
