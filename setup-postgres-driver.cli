@@ -1,7 +1,8 @@
+embed-server
+
 batch
 
 module add --name=org.postgres --resources=/tmp/postgresql-${POSTGRES_DRIVER_VERSION}.jar --dependencies=javax.api,javax.transaction.api
 /subsystem=datasources/jdbc-driver=postgres:add(driver-name="postgres",driver-module-name="org.postgres",driver-class-name=org.postgresql.Driver)
 
 run-batch
-
