@@ -1,6 +1,7 @@
-FROM jboss/wildfly:10.1.0.Final
+ARG WILDFLY_VERSION
+FROM jboss/wildfly:$WILDFLY_VERSION
 
-ARG POSTGRES_DRIVER_VERSION=42.1.4
+ARG POSTGRES_DRIVER_VERSION
 
 COPY --chown=jboss:jboss setup-postgres-driver.cli /tmp/
 
@@ -12,8 +13,6 @@ RUN curl -o /tmp/postgresql-$POSTGRES_DRIVER_VERSION.jar https://jdbc.postgresql
     rm env.properties && \
     rm -rf $JBOSS_HOME/standalone/configuration/standalone_xml_history/current
 #   ^^^ Fix for WFLYCTL0056: Could not rename /opt/jboss/wildfly/standalone/configuration/standalone_xml_history/current to ...
-
-RUN $JBOSS_HOME/bin/add-user.sh admin pa55w0rd --silent
 
 EXPOSE 8080 9990
 
